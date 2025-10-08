@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import Metadata from "@/components/page/metadata";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,7 +13,11 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { type RegisterSchema, registerSchema } from "@/modules/auth";
+import {
+	type RegisterSchema,
+	registerSchema,
+	useRegisterMutation,
+} from "@/modules/auth";
 
 export const Route = createFileRoute("/_auth/register")({
 	component: RegisterPage,
@@ -42,10 +47,18 @@ function RegisterForm() {
 		},
 	});
 
+	const registerMutation = useRegisterMutation();
+
 	function onSubmit(values: RegisterSchema) {
-		// Do something with the form values.
-		// ✅ This will be type-safe and validated.
-		console.log(values);
+		registerMutation.mutate(values, {
+			onSuccess: (data) => {
+				localStorage.setItem("accessToken", data.accessToken);
+				toast.success(data.message);
+			},
+			onError: (error) => {
+				toast.error(error.message);
+			},
+		});
 	}
 
 	return (
