@@ -1,21 +1,21 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { authClient } from "@/lib/auth-client";
 
-export const Route = createFileRoute("/_auth")({
+export const Route = createFileRoute("/_protected")({
 	beforeLoad: async () => {
 		const session = await authClient.getSession();
 
-		if (session) {
-			throw redirect({ to: "/profile/lmao" });
+		if (!session) {
+			throw redirect({ to: "/login" });
 		}
 	},
-	component: AuthLayout,
+	component: ProtectedLayout,
 });
 
-function AuthLayout() {
+function ProtectedLayout() {
 	return (
-		<section className="h-screen p-3">
+		<div>
 			<Outlet />
-		</section>
+		</div>
 	);
 }

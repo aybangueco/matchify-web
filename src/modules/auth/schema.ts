@@ -10,13 +10,27 @@ export type LoginSchema = z.infer<typeof loginSchema>;
 export const registerSchema = z
 	.object({
 		email: z.email().nonempty({ error: "Email is required" }),
+		name: z
+			.string()
+			.nonempty({ error: "Name is required" })
+			.min(5, { error: "Name too short" })
+			.max(20, { error: "Name too long" })
+			.regex(/^[A-Za-z]+(?: [A-Za-z]+)*$/, {
+				error: "Name can only contain letters and a single space between words",
+			}),
+
 		username: z
 			.string()
+			.nonempty({ error: "Username is required" })
 			.min(4, { error: "Username too short" })
 			.max(15, { error: "Username too long" })
-			.nonempty({ error: "Username is required" }),
+			.regex(/^[a-z0-9]+$/, {
+				error: "Username can only contain lowercase letters and numbers",
+			}),
+
 		password: z
 			.string()
+			.nonempty({ error: "Password is required" })
 			.min(8, { error: "Password too short" })
 			.max(25, { error: "Password too long" })
 			.regex(/[A-Z]/, {
@@ -28,8 +42,8 @@ export const registerSchema = z
 			.regex(/[0-9]/, { error: "Password must contain at least one number" })
 			.regex(/[^a-zA-Z0-9]/, {
 				error: "Password must contain at least one special character",
-			})
-			.nonempty({ error: "Password is required" }),
+			}),
+
 		confirmPassword: z
 			.string()
 			.nonempty({ error: "Confirm Password is required" }),

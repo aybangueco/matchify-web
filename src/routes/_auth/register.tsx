@@ -1,7 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
 import Metadata from "@/components/page/metadata";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,11 +12,8 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-	type RegisterSchema,
-	registerSchema,
-	useRegisterMutation,
-} from "@/modules/auth";
+import { authClient } from "@/lib/auth-client";
+import { type RegisterSchema, registerSchema } from "@/modules/auth";
 
 export const Route = createFileRoute("/_auth/register")({
 	component: RegisterPage,
@@ -40,6 +36,7 @@ function RegisterForm() {
 	const registerForm = useForm<RegisterSchema>({
 		resolver: zodResolver(registerSchema),
 		defaultValues: {
+			name: "",
 			email: "",
 			username: "",
 			password: "",
@@ -47,18 +44,8 @@ function RegisterForm() {
 		},
 	});
 
-	const registerMutation = useRegisterMutation();
-
-	function onSubmit(values: RegisterSchema) {
-		registerMutation.mutate(values, {
-			onSuccess: (data) => {
-				localStorage.setItem("accessToken", data.accessToken);
-				toast.success(data.message);
-			},
-			onError: (error) => {
-				toast.error(error.message);
-			},
-		});
+	async function onSubmit(values: RegisterSchema) {
+		await authClient.signUp.email(values);
 	}
 
 	return (
@@ -68,6 +55,19 @@ function RegisterForm() {
 				className="w-md max-w-md flex flex-col gap-3"
 			>
 				<h1 className="text-center text-xl font-bold">Register</h1>
+				<FormField
+					control={registerForm.control}
+					name="name"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Name</FormLabel>
+							<FormControl>
+								<Input placeholder="Enter your name" {...field} />
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
 				<FormField
 					control={registerForm.control}
 					name="email"
@@ -94,41 +94,43 @@ function RegisterForm() {
 						</FormItem>
 					)}
 				/>
-				<FormField
-					control={registerForm.control}
-					name="password"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Password</FormLabel>
-							<FormControl>
-								<Input
-									type="password"
-									placeholder="Enter your password"
-									{...field}
-								/>
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
+				<div className="flex gap-3">
+					<FormField
+						control={registerForm.control}
+						name="password"
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>Password</FormLabel>
+								<FormControl>
+									<Input
+										type="password"
+										placeholder="Enter your password"
+										{...field}
+									/>
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
 
-				<FormField
-					control={registerForm.control}
-					name="confirmPassword"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Confirm Password</FormLabel>
-							<FormControl>
-								<Input
-									type="password"
-									placeholder="Enter your password"
-									{...field}
-								/>
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
+					<FormField
+						control={registerForm.control}
+						name="confirmPassword"
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>Confirm Password</FormLabel>
+								<FormControl>
+									<Input
+										type="password"
+										placeholder="Enter your password"
+										{...field}
+									/>
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+				</div>
 				<Button type="submit">Submit</Button>
 				<p className="text-center">
 					Already have account?{" "}

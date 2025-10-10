@@ -32,6 +32,10 @@ declare module "@tanstack/react-router" {
 	}
 }
 
+function InnerApp() {
+	return <RouterProvider router={router} />;
+}
+
 // Render the app
 const rootElement = document.getElementById("app");
 if (rootElement && !rootElement.innerHTML) {
@@ -40,7 +44,7 @@ if (rootElement && !rootElement.innerHTML) {
 		<StrictMode>
 			<TanStackQueryProvider.Provider {...TanStackQueryProviderContext}>
 				<Toaster />
-				<RouterProvider router={router} />
+				<InnerApp />
 			</TanStackQueryProvider.Provider>
 		</StrictMode>,
 	);
