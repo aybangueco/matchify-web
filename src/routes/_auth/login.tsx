@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import Metadata from "@/components/page/metadata";
 import { Button } from "@/components/ui/button";
 import {
@@ -41,8 +42,18 @@ function LoginForm() {
 		},
 	});
 
+	const navigate = useNavigate();
+
 	async function onSubmit(values: LoginSchema) {
-		await authClient.signIn.username(values);
+		const { error } = await authClient.signIn.username(values);
+
+		if (error?.message) {
+			toast.error(error.message);
+			return;
+		}
+
+		toast.success("Logged in successfully");
+		navigate({ to: "/profile/lmao" });
 	}
 
 	return (
@@ -85,11 +96,17 @@ function LoginForm() {
 				<div className="text-right">
 					<p className="text-sm">Forgot your password?</p>
 				</div>
-				<Button type="submit">Submit</Button>
+				<Button disabled={loginForm.formState.isSubmitting} type="submit">
+					{loginForm.formState.isSubmitting ? "Submitting..." : "Submit"}
+				</Button>
 				<p className="text-center">
 					Don&apos;t have account yet?{" "}
 					<span>
-						<Link className="hover:underline" to="/register">
+						<Link
+							disabled={loginForm.formState.isSubmitting}
+							className="hover:underline"
+							to="/register"
+						>
 							Register
 						</Link>{" "}
 						here.

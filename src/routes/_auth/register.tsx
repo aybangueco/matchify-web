@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import Metadata from "@/components/page/metadata";
 import { Button } from "@/components/ui/button";
 import {
@@ -44,8 +45,18 @@ function RegisterForm() {
 		},
 	});
 
+	const navigate = useNavigate();
+
 	async function onSubmit(values: RegisterSchema) {
-		await authClient.signUp.email(values);
+		const { error } = await authClient.signUp.email(values);
+
+		if (error?.message) {
+			toast.error(error.message);
+			return;
+		}
+
+		toast.success("Registered successfully");
+		navigate({ to: "/profile/setup" });
 	}
 
 	return (
@@ -131,11 +142,17 @@ function RegisterForm() {
 						)}
 					/>
 				</div>
-				<Button type="submit">Submit</Button>
+				<Button disabled={registerForm.formState.isSubmitting} type="submit">
+					{registerForm.formState.isSubmitting ? "Submitting..." : "Submit"}
+				</Button>
 				<p className="text-center">
 					Already have account?{" "}
 					<span>
-						<Link className="hover:underline" to="/login">
+						<Link
+							disabled={registerForm.formState.isSubmitting}
+							className="hover:underline"
+							to="/login"
+						>
 							Login
 						</Link>{" "}
 						here.
