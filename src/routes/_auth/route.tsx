@@ -3,10 +3,10 @@ import { authClient } from "@/lib/auth-client";
 
 export const Route = createFileRoute("/_auth")({
 	beforeLoad: async () => {
-		const session = await authClient.getSession();
+		const { data } = await authClient.getSession();
 
-		if (session) {
-			throw redirect({ to: "/profile/lmao" });
+		if (data?.session) {
+			throw redirect({ to: "/profile" });
 		}
 	},
 	component: AuthLayout,
