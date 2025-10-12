@@ -14,7 +14,9 @@ import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRegisterRouteImport } from './routes/_auth/register'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
-import { Route as ProtectedProfileLmaoRouteImport } from './routes/_protected/profile/lmao'
+import { Route as ProtectedProfileIndexRouteImport } from './routes/_protected/profile/index'
+import { Route as ProtectedProfileSetupIndexRouteImport } from './routes/_protected/profile/setup/index'
+import { Route as ProtectedProfileUserIDIndexRouteImport } from './routes/_protected/profile/$userID/index'
 
 const ProtectedRouteRoute = ProtectedRouteRouteImport.update({
   id: '/_protected',
@@ -39,23 +41,39 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AuthRouteRoute,
 } as any)
-const ProtectedProfileLmaoRoute = ProtectedProfileLmaoRouteImport.update({
-  id: '/profile/lmao',
-  path: '/profile/lmao',
+const ProtectedProfileIndexRoute = ProtectedProfileIndexRouteImport.update({
+  id: '/profile/',
+  path: '/profile/',
   getParentRoute: () => ProtectedRouteRoute,
 } as any)
+const ProtectedProfileSetupIndexRoute =
+  ProtectedProfileSetupIndexRouteImport.update({
+    id: '/profile/setup/',
+    path: '/profile/setup/',
+    getParentRoute: () => ProtectedRouteRoute,
+  } as any)
+const ProtectedProfileUserIDIndexRoute =
+  ProtectedProfileUserIDIndexRouteImport.update({
+    id: '/profile/$userID/',
+    path: '/profile/$userID/',
+    getParentRoute: () => ProtectedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
-  '/profile/lmao': typeof ProtectedProfileLmaoRoute
+  '/profile': typeof ProtectedProfileIndexRoute
+  '/profile/$userID': typeof ProtectedProfileUserIDIndexRoute
+  '/profile/setup': typeof ProtectedProfileSetupIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
-  '/profile/lmao': typeof ProtectedProfileLmaoRoute
+  '/profile': typeof ProtectedProfileIndexRoute
+  '/profile/$userID': typeof ProtectedProfileUserIDIndexRoute
+  '/profile/setup': typeof ProtectedProfileSetupIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -64,13 +82,27 @@ export interface FileRoutesById {
   '/_protected': typeof ProtectedRouteRouteWithChildren
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/register': typeof AuthRegisterRoute
-  '/_protected/profile/lmao': typeof ProtectedProfileLmaoRoute
+  '/_protected/profile/': typeof ProtectedProfileIndexRoute
+  '/_protected/profile/$userID/': typeof ProtectedProfileUserIDIndexRoute
+  '/_protected/profile/setup/': typeof ProtectedProfileSetupIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/register' | '/profile/lmao'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/register'
+    | '/profile'
+    | '/profile/$userID'
+    | '/profile/setup'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/register' | '/profile/lmao'
+  to:
+    | '/'
+    | '/login'
+    | '/register'
+    | '/profile'
+    | '/profile/$userID'
+    | '/profile/setup'
   id:
     | '__root__'
     | '/'
@@ -78,7 +110,9 @@ export interface FileRouteTypes {
     | '/_protected'
     | '/_auth/login'
     | '/_auth/register'
-    | '/_protected/profile/lmao'
+    | '/_protected/profile/'
+    | '/_protected/profile/$userID/'
+    | '/_protected/profile/setup/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -124,11 +158,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof AuthRouteRoute
     }
-    '/_protected/profile/lmao': {
-      id: '/_protected/profile/lmao'
-      path: '/profile/lmao'
-      fullPath: '/profile/lmao'
-      preLoaderRoute: typeof ProtectedProfileLmaoRouteImport
+    '/_protected/profile/': {
+      id: '/_protected/profile/'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProtectedProfileIndexRouteImport
+      parentRoute: typeof ProtectedRouteRoute
+    }
+    '/_protected/profile/setup/': {
+      id: '/_protected/profile/setup/'
+      path: '/profile/setup'
+      fullPath: '/profile/setup'
+      preLoaderRoute: typeof ProtectedProfileSetupIndexRouteImport
+      parentRoute: typeof ProtectedRouteRoute
+    }
+    '/_protected/profile/$userID/': {
+      id: '/_protected/profile/$userID/'
+      path: '/profile/$userID'
+      fullPath: '/profile/$userID'
+      preLoaderRoute: typeof ProtectedProfileUserIDIndexRouteImport
       parentRoute: typeof ProtectedRouteRoute
     }
   }
@@ -149,11 +197,15 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
 )
 
 interface ProtectedRouteRouteChildren {
-  ProtectedProfileLmaoRoute: typeof ProtectedProfileLmaoRoute
+  ProtectedProfileIndexRoute: typeof ProtectedProfileIndexRoute
+  ProtectedProfileUserIDIndexRoute: typeof ProtectedProfileUserIDIndexRoute
+  ProtectedProfileSetupIndexRoute: typeof ProtectedProfileSetupIndexRoute
 }
 
 const ProtectedRouteRouteChildren: ProtectedRouteRouteChildren = {
-  ProtectedProfileLmaoRoute: ProtectedProfileLmaoRoute,
+  ProtectedProfileIndexRoute: ProtectedProfileIndexRoute,
+  ProtectedProfileUserIDIndexRoute: ProtectedProfileUserIDIndexRoute,
+  ProtectedProfileSetupIndexRoute: ProtectedProfileSetupIndexRoute,
 }
 
 const ProtectedRouteRouteWithChildren = ProtectedRouteRoute._addFileChildren(
