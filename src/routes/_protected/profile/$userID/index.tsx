@@ -1,33 +1,33 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import { Card } from "@/components/ui/card";
+import { userProfileQueryOptions } from "@/modules/profile";
 import ProfileCard from "@/modules/profile/components/profile-card";
-import { profileQueryOptions } from "@/modules/profile/service";
-import { Route as ProtectedRoute } from "../route";
+import { Route as ProtectedRoute } from "../../route";
 
-export const Route = createFileRoute("/_protected/profile/")({
-	loader: async ({ context }) => {
+export const Route = createFileRoute("/_protected/profile/$userID/")({
+	loader: async ({ params, context }) => {
 		const profileResponse = await context.queryClient.ensureQueryData(
-			profileQueryOptions(),
+			userProfileQueryOptions(params.userID),
 		);
 
 		if (!profileResponse.profile) {
-			throw redirect({ to: "/profile/setup" });
+			throw notFound();
 		}
 
 		return profileResponse.profile;
 	},
-	component: RouteComponent,
+	component: ProfileUserPage,
 });
 
-function RouteComponent() {
-	const user = ProtectedRoute.useLoaderData();
+function ProfileUserPage() {
+	const data = ProtectedRoute.useLoaderData();
 	const profile = Route.useLoaderData();
 
 	return (
-		<div className="bg-background py-12 px-4">
+		<div className="py-12 px-4">
 			<div className="max-w-md mx-auto space-y-8">
 				{/* Profile Card */}
-				<ProfileCard session={user} profile={profile} />
+				<ProfileCard session={data} profile={profile} />
 
 				{/* Top Artists Section */}
 				<div>
