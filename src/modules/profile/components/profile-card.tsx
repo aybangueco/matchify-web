@@ -18,11 +18,13 @@ export default function ProfileCard({ session, profile }: ProfileCardProps) {
 				</div>
 
 				<div className="space-y-2">
-					<h1 className="text-3xl font-bold tracking-tight">
+					<h1 className="text-3xl font-bold tracking-tight text-primary">
 						{session.user.name}
 					</h1>
 
-					<div>@{session.user.username}</div>
+					<div className="text-secondary-foreground">
+						@{session.user.username}
+					</div>
 
 					<div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
 						<span>{profile.location}</span>
