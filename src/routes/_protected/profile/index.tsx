@@ -65,7 +65,7 @@ function ProfilePage() {
 	};
 
 	return (
-		<div className="bg-background py-12 px-4">
+		<div className="py-12 px-4">
 			<div className="max-w-md mx-auto space-y-8">
 				{/* Profile Card */}
 				<ProfileCard session={{ user, session }} profile={profile} />
@@ -122,8 +122,19 @@ function SearchArtistDialog({
 	onOpenChange: (active: boolean) => void;
 }) {
 	const [searchQuery, setSearchQuery] = useState("");
+	const [isSearching, setIsSearching] = useState<boolean>(false);
 	const { user } = ProtectedRoute.useLoaderData();
 	const [artists, setArtists] = useState<ArtistMatchInfo[]>([]);
+
+	let searchResult = "";
+
+	if (!searchQuery) {
+		searchResult = "Type to search for an artist";
+	} else if (isSearching) {
+		searchResult = "Searching...";
+	} else if (searchQuery && artists.length < 1) {
+		searchResult = "Artist not found";
+	}
 
 	const debounce = useDebounce();
 	const queryClient = useQueryClient();
@@ -167,12 +178,14 @@ function SearchArtistDialog({
 							onChange={(e) => {
 								const value = e.target.value;
 								setSearchQuery(value);
+								setIsSearching(true);
 								debounce(() => {
 									queryClient
 										.ensureQueryData(searchArtistQueryOptions(value))
 										.then((data) => {
 											setArtists(data.artists ?? []);
-										});
+										})
+										.finally(() => setIsSearching(false));
 								}, 500);
 							}}
 							className="pl-10"
@@ -203,9 +216,7 @@ function SearchArtistDialog({
 							))
 						) : (
 							<p className="text-sm text-muted-foreground text-center py-8">
-								{searchQuery
-									? "No artists found"
-									: "Type to search for artists"}
+								{searchResult}
 							</p>
 						)}
 					</div>
