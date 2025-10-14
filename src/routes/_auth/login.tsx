@@ -53,7 +53,7 @@ function LoginForm() {
 		}
 
 		toast.success("Logged in successfully");
-		navigate({ to: "/profile/lmao" });
+		navigate({ to: "/profile" });
 	}
 
 	return (
