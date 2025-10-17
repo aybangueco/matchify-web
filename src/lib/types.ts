@@ -59,3 +59,30 @@ export interface GetArtistsResponse extends APIResponse {
 export interface ArtistResponse extends APIResponse {
 	artist: Artist;
 }
+
+export type Find = "ARTISTS" | "ALBUMS" | "MOVIES";
+
+export type SocketType = "CONNECTED" | "DISCONNECTED" | "MESSAGE" | "BROADCAST";
+
+export type WSDisconnected = {
+	type: "DISCONNECTED";
+	message: string;
+};
+
+export interface ConnectedTo {
+	username: string;
+}
+
+export type WSConnected = {
+	type: "CONNECTED";
+	connectedTo: ConnectedTo;
+	message: string;
+};
+
+export type WSMessage = {
+	type: "MESSAGE";
+	message: string;
+	fromID: string;
+};
+
+export type WSDataContext = WSDisconnected | WSConnected | WSMessage;

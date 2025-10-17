@@ -1,6 +1,13 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { Disc3, Film, type LucideProps, Music } from "lucide-react";
+import { useEffect, useState } from "react";
+import useWebSocket from "react-use-websocket";
+import type { SendJsonMessage } from "react-use-websocket/dist/lib/types";
 import { Button } from "@/components/ui/button";
+import { authClient } from "@/lib/auth-client";
+import type { ConnectedTo, Find, WSDataContext, WSMessage } from "@/lib/types";
+import Chat from "@/modules/find/components/chat";
+import FindingMatch from "@/modules/find/components/finding-match";
 
 export const Route = createFileRoute("/_protected/find/")({
 	component: FindPage,
@@ -16,14 +23,51 @@ type Option = {
 };
 
 function FindPage() {
-	const navigate = useNavigate();
+	const { data: session } = authClient.useSession();
+	const [find, setFind] = useState<Find | null>(null);
+	const [isFinding, setIsFinding] = useState<boolean>(false);
+	const [isConnected, setIsConnected] = useState<boolean>(false);
+	const [connectedTo, setConnectedTo] = useState<ConnectedTo | null>(null);
+
+	const [messages, setMessages] = useState<WSMessage[]>([]);
+	const [alertMessage, setAlertMessage] = useState<string | null>(null);
+
+	const [socketURL, setSocketURL] = useState<string | null>(null);
+	const {
+		lastJsonMessage,
+		sendJsonMessage,
+	}: { lastJsonMessage: WSDataContext; sendJsonMessage: SendJsonMessage } =
+		useWebSocket(socketURL);
+
+	const onSendMessage = (message: string) => {
+		const newMessage: WSMessage = {
+			type: "MESSAGE",
+			message,
+			fromID: session?.user.id ?? "",
+		};
+		sendJsonMessage<WSMessage>(newMessage);
+	};
+
+	const onClickCancel = () => {
+		setFind(null);
+		setSocketURL(null);
+		setIsFinding(false);
+		setMessages([]);
+		setConnectedTo(null);
+	};
+
+	const onClickFindArtist = () => {
+		setFind("ARTISTS");
+		setSocketURL("ws://localhost:8080/chat/artist");
+		setIsFinding(true);
+	};
 
 	const options: Option[] = [
 		{
 			icon: Music,
 			label: "Find Strangers Based on Artists",
 			description: "Connect over your favorite musicians and artists",
-			onClick: () => navigate({ to: "/find/artist" }),
+			onClick: onClickFindArtist,
 		},
 		{
 			icon: Disc3,
@@ -36,6 +80,47 @@ function FindPage() {
 			description: "Bond over films and cinema",
 		},
 	];
+
+	// Managing connection state of users
+	useEffect(() => {
+		console.log(lastJsonMessage);
+
+		if (lastJsonMessage && lastJsonMessage.type === "DISCONNECTED") {
+			setSocketURL(null);
+			setIsConnected(false);
+			setAlertMessage(lastJsonMessage.message);
+		} else if (lastJsonMessage && lastJsonMessage.type === "CONNECTED") {
+			if (lastJsonMessage.connectedTo) {
+				setConnectedTo(lastJsonMessage.connectedTo);
+			}
+
+			setIsFinding(false);
+			setIsConnected(true);
+			setAlertMessage(lastJsonMessage.message);
+		} else if (lastJsonMessage && lastJsonMessage.type === "MESSAGE") {
+			setMessages((prev) => [...prev, lastJsonMessage]);
+		}
+	}, [lastJsonMessage]);
+
+	// Finding users to match
+	if (isFinding) {
+		return <FindingMatch onCancel={onClickCancel} />;
+	}
+
+	if (find === "ARTISTS" && !isFinding) {
+		return (
+			<Chat
+				messages={messages}
+				setMessages={setMessages}
+				onSendMessage={onSendMessage}
+				isConnected={isConnected}
+				onDisconnect={() => onClickCancel()}
+				otherName={connectedTo?.username ?? ""}
+				yourName={session?.user.username ?? ""}
+				alertMessage={alertMessage}
+			/>
+		);
+	}
 
 	return (
 		<div className="py-12 px-4 flex items-center justify-center">
