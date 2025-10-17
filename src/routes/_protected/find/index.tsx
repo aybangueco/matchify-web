@@ -6,8 +6,7 @@ import type { SendJsonMessage } from "react-use-websocket/dist/lib/types";
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 import type { ConnectedTo, Find, WSDataContext, WSMessage } from "@/lib/types";
-import Chat from "@/modules/find/components/chat";
-import FindingMatch from "@/modules/find/components/finding-match";
+import { Chat, FindingMatch } from "@/modules/find";
 
 export const Route = createFileRoute("/_protected/find/")({
 	component: FindPage,
