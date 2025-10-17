@@ -15,6 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRegisterRouteImport } from './routes/_auth/register'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as ProtectedProfileIndexRouteImport } from './routes/_protected/profile/index'
+import { Route as ProtectedFindIndexRouteImport } from './routes/_protected/find/index'
 import { Route as ProtectedProfileSetupIndexRouteImport } from './routes/_protected/profile/setup/index'
 import { Route as ProtectedProfileUserIDIndexRouteImport } from './routes/_protected/profile/$userID/index'
 
@@ -46,6 +47,11 @@ const ProtectedProfileIndexRoute = ProtectedProfileIndexRouteImport.update({
   path: '/profile/',
   getParentRoute: () => ProtectedRouteRoute,
 } as any)
+const ProtectedFindIndexRoute = ProtectedFindIndexRouteImport.update({
+  id: '/find/',
+  path: '/find/',
+  getParentRoute: () => ProtectedRouteRoute,
+} as any)
 const ProtectedProfileSetupIndexRoute =
   ProtectedProfileSetupIndexRouteImport.update({
     id: '/profile/setup/',
@@ -63,6 +69,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
+  '/find': typeof ProtectedFindIndexRoute
   '/profile': typeof ProtectedProfileIndexRoute
   '/profile/$userID': typeof ProtectedProfileUserIDIndexRoute
   '/profile/setup': typeof ProtectedProfileSetupIndexRoute
@@ -71,6 +78,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
+  '/find': typeof ProtectedFindIndexRoute
   '/profile': typeof ProtectedProfileIndexRoute
   '/profile/$userID': typeof ProtectedProfileUserIDIndexRoute
   '/profile/setup': typeof ProtectedProfileSetupIndexRoute
@@ -82,6 +90,7 @@ export interface FileRoutesById {
   '/_protected': typeof ProtectedRouteRouteWithChildren
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/register': typeof AuthRegisterRoute
+  '/_protected/find/': typeof ProtectedFindIndexRoute
   '/_protected/profile/': typeof ProtectedProfileIndexRoute
   '/_protected/profile/$userID/': typeof ProtectedProfileUserIDIndexRoute
   '/_protected/profile/setup/': typeof ProtectedProfileSetupIndexRoute
@@ -92,6 +101,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/register'
+    | '/find'
     | '/profile'
     | '/profile/$userID'
     | '/profile/setup'
@@ -100,6 +110,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/register'
+    | '/find'
     | '/profile'
     | '/profile/$userID'
     | '/profile/setup'
@@ -110,6 +121,7 @@ export interface FileRouteTypes {
     | '/_protected'
     | '/_auth/login'
     | '/_auth/register'
+    | '/_protected/find/'
     | '/_protected/profile/'
     | '/_protected/profile/$userID/'
     | '/_protected/profile/setup/'
@@ -165,6 +177,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedProfileIndexRouteImport
       parentRoute: typeof ProtectedRouteRoute
     }
+    '/_protected/find/': {
+      id: '/_protected/find/'
+      path: '/find'
+      fullPath: '/find'
+      preLoaderRoute: typeof ProtectedFindIndexRouteImport
+      parentRoute: typeof ProtectedRouteRoute
+    }
     '/_protected/profile/setup/': {
       id: '/_protected/profile/setup/'
       path: '/profile/setup'
@@ -197,12 +216,14 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
 )
 
 interface ProtectedRouteRouteChildren {
+  ProtectedFindIndexRoute: typeof ProtectedFindIndexRoute
   ProtectedProfileIndexRoute: typeof ProtectedProfileIndexRoute
   ProtectedProfileUserIDIndexRoute: typeof ProtectedProfileUserIDIndexRoute
   ProtectedProfileSetupIndexRoute: typeof ProtectedProfileSetupIndexRoute
 }
 
 const ProtectedRouteRouteChildren: ProtectedRouteRouteChildren = {
+  ProtectedFindIndexRoute: ProtectedFindIndexRoute,
   ProtectedProfileIndexRoute: ProtectedProfileIndexRoute,
   ProtectedProfileUserIDIndexRoute: ProtectedProfileUserIDIndexRoute,
   ProtectedProfileSetupIndexRoute: ProtectedProfileSetupIndexRoute,
