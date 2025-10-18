@@ -18,7 +18,7 @@ export default function FindingMatch({
 
 	useEffect(() => {
 		const interval = setInterval(() => {
-			setDots((prev) => (prev.length >= 3 ? "" : prev + "."));
+			setDots((prev) => (prev.length >= 3 ? "" : `${prev} .`));
 		}, 500);
 
 		return () => clearInterval(interval);
