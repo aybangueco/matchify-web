@@ -56,7 +56,7 @@ export default function Chat({
 		const newMessage: WSMessage = {
 			type: "MESSAGE",
 			message: inputValue,
-			fromID: session?.user.id ?? "",
+			from: session?.user.id ?? "",
 		};
 
 		setMessages((prev) => [...prev, newMessage]);
@@ -125,19 +125,19 @@ export default function Chat({
 							// That means we are good to just use index for simple cases.
 							// biome-ignore lint: Avoid using the index as key property in an element.
 							key={index}
-							className={`flex gap-3 ${message.fromID === session?.user.id ? "flex-row-reverse" : "flex-row"}`}
+							className={`flex gap-3 ${message.from === session?.user.id ? "flex-row-reverse" : "flex-row"}`}
 						>
 							<div className="flex-shrink-0">
 								<div
 									className={`w-8 h-8 rounded-full flex items-center justify-center ${
-										message.fromID === session?.user.id
+										message.from === session?.user.id
 											? "bg-primary/10"
 											: "bg-muted"
 									}`}
 								>
 									<UserCircle2
 										className={`w-5 h-5 ${
-											message.fromID === session?.user.id
+											message.from === session?.user.id
 												? "text-primary"
 												: "text-muted-foreground"
 										}`}
@@ -146,14 +146,14 @@ export default function Chat({
 							</div>
 
 							<div
-								className={`flex flex-col ${message.fromID === session?.user.id ? "items-end" : "items-start"} max-w-[70%]`}
+								className={`flex flex-col ${message.from === session?.user.id ? "items-end" : "items-start"} max-w-[70%]`}
 							>
 								<span className="text-xs text-muted-foreground mb-1">
-									{message.fromID === session?.user.id ? yourName : otherName}
+									{message.from === session?.user.id ? yourName : otherName}
 								</span>
 								<div
 									className={`rounded-lg px-4 py-2 ${
-										message.fromID === session?.user.id
+										message.from === session?.user.id
 											? "bg-primary text-primary-foreground"
 											: "bg-muted text-foreground"
 									}`}

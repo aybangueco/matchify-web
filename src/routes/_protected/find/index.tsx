@@ -42,7 +42,7 @@ function FindPage() {
 		const newMessage: WSMessage = {
 			type: "MESSAGE",
 			message,
-			fromID: session?.user.id ?? "",
+			from: session?.user.id ?? "",
 		};
 		sendJsonMessage<WSMessage>(newMessage);
 	};

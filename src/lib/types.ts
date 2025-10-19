@@ -82,7 +82,7 @@ export type WSConnected = {
 export type WSMessage = {
 	type: "MESSAGE";
 	message: string;
-	fromID: string;
+	from: string;
 };
 
 export type WSDataContext = WSDisconnected | WSConnected | WSMessage;
