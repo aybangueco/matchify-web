@@ -21,7 +21,6 @@ type ChatProps = {
 	onSendMessage: (message: string) => void;
 	otherName: string;
 	yourName: string;
-	alertMessage: string | null;
 	// isOtherTyping: boolean;
 };
 
@@ -33,7 +32,6 @@ export default function Chat({
 	onSendMessage,
 	otherName,
 	yourName,
-	alertMessage,
 	// isOtherTyping,
 }: ChatProps) {
 	const [inputValue, setInputValue] = useState<string>("");
@@ -111,14 +109,6 @@ export default function Chat({
 
 				{/* Messages Area */}
 				<div className="flex-1 overflow-y-auto p-4 space-y-4">
-					{messages.length === 0 && (
-						<Alert className="bg-muted/50 border-border">
-							<AlertDescription className="text-muted-foreground text-center">
-								{alertMessage}
-							</AlertDescription>
-						</Alert>
-					)}
-
 					{messages.map((message, index) => (
 						<div
 							// The messages are just appending, we wont change or delete them, so orders won't change
@@ -127,52 +117,54 @@ export default function Chat({
 							key={index}
 							className={`flex gap-3 ${message.from === session?.user.id ? "flex-row-reverse" : "flex-row"}`}
 						>
-							<div className="flex-shrink-0">
-								<div
-									className={`w-8 h-8 rounded-full flex items-center justify-center ${
-										message.from === session?.user.id
-											? "bg-primary/10"
-											: "bg-muted"
-									}`}
-								>
-									<UserCircle2
-										className={`w-5 h-5 ${
-											message.from === session?.user.id
-												? "text-primary"
-												: "text-muted-foreground"
-										}`}
-									/>
-								</div>
-							</div>
-
-							<div
-								className={`flex flex-col ${message.from === session?.user.id ? "items-end" : "items-start"} max-w-[70%]`}
-							>
-								<span className="text-xs text-muted-foreground mb-1">
-									{message.from === session?.user.id ? yourName : otherName}
-								</span>
-								<div
-									className={`rounded-lg px-4 py-2 ${
-										message.from === session?.user.id
-											? "bg-primary text-primary-foreground"
-											: "bg-muted text-foreground"
-									}`}
-								>
-									<p className="text-sm whitespace-pre-wrap break-words">
+							{message.from === "SYSTEM" ? (
+								<Alert className="bg-muted/50 border-border">
+									<AlertDescription className="text-muted-foreground text-center">
 										{message.message}
-									</p>
-								</div>
-							</div>
+									</AlertDescription>
+								</Alert>
+							) : (
+								<>
+									<div className="flex-shrink-0">
+										<div
+											className={`w-8 h-8 rounded-full flex items-center justify-center ${
+												message.from === session?.user.id
+													? "bg-primary/10"
+													: "bg-muted"
+											}`}
+										>
+											<UserCircle2
+												className={`w-5 h-5 ${
+													message.from === session?.user.id
+														? "text-primary"
+														: "text-muted-foreground"
+												}`}
+											/>
+										</div>
+									</div>
+
+									<div
+										className={`flex flex-col ${message.from === session?.user.id ? "items-end" : "items-start"} max-w-[70%]`}
+									>
+										<span className="text-xs text-muted-foreground mb-1">
+											{message.from === session?.user.id ? yourName : otherName}
+										</span>
+										<div
+											className={`rounded-lg px-4 py-2 ${
+												message.from === session?.user.id
+													? "bg-primary text-primary-foreground"
+													: "bg-muted text-foreground"
+											}`}
+										>
+											<p className="text-sm whitespace-pre-wrap break-words">
+												{message.message}
+											</p>
+										</div>
+									</div>
+								</>
+							)}
 						</div>
 					))}
-
-					{!isConnected && (
-						<Alert className="bg-muted/50 border-border">
-							<AlertDescription className="text-muted-foreground text-center">
-								{alertMessage}
-							</AlertDescription>
-						</Alert>
-					)}
 
 					{/*{isOtherTyping && (
 						<div className="flex gap-3">
@@ -210,7 +202,13 @@ export default function Chat({
 
 				{/* Input Area */}
 				<div className="border-t border-border p-4 bg-muted/30">
-					<div className="flex gap-2">
+					<form
+						onSubmit={(e) => {
+							e.preventDefault();
+							handleSendMessage();
+						}}
+						className="flex gap-2"
+					>
 						<Input
 							type="text"
 							placeholder="Type a message..."
@@ -228,7 +226,7 @@ export default function Chat({
 							<Send className="w-4 h-4" />
 							Send
 						</Button>
-					</div>
+					</form>
 					<p className="text-xs text-muted-foreground mt-2">
 						Press Enter to send
 					</p>

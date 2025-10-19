@@ -29,7 +29,6 @@ function FindPage() {
 	const [connectedTo, setConnectedTo] = useState<ConnectedTo | null>(null);
 
 	const [messages, setMessages] = useState<WSMessage[]>([]);
-	const [alertMessage, setAlertMessage] = useState<string | null>(null);
 
 	const [socketURL, setSocketURL] = useState<string | null>(null);
 	const {
@@ -87,7 +86,6 @@ function FindPage() {
 		if (lastJsonMessage && lastJsonMessage.type === "DISCONNECTED") {
 			setSocketURL(null);
 			setIsConnected(false);
-			setAlertMessage(lastJsonMessage.message);
 		} else if (lastJsonMessage && lastJsonMessage.type === "CONNECTED") {
 			if (lastJsonMessage.connectedTo) {
 				setConnectedTo(lastJsonMessage.connectedTo);
@@ -95,7 +93,6 @@ function FindPage() {
 
 			setIsFinding(false);
 			setIsConnected(true);
-			setAlertMessage(lastJsonMessage.message);
 		} else if (lastJsonMessage && lastJsonMessage.type === "MESSAGE") {
 			setMessages((prev) => [...prev, lastJsonMessage]);
 		}
@@ -116,7 +113,6 @@ function FindPage() {
 				onDisconnect={() => onClickCancel()}
 				otherName={connectedTo?.username ?? ""}
 				yourName={session?.user.username ?? ""}
-				alertMessage={alertMessage}
 			/>
 		);
 	}

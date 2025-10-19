@@ -76,13 +76,12 @@ export interface ConnectedTo {
 export type WSConnected = {
 	type: "CONNECTED";
 	connectedTo: ConnectedTo;
-	message: string;
 };
 
 export type WSMessage = {
 	type: "MESSAGE";
 	message: string;
-	from: string;
+	from: string | "SYSTEM";
 };
 
 export type WSDataContext = WSDisconnected | WSConnected | WSMessage;
