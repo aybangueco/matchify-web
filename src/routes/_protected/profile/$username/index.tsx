@@ -1,13 +1,12 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { Card } from "@/components/ui/card";
-import { userProfileQueryOptions } from "@/modules/profile";
+import { userProfileByUsernameQueryOptions } from "@/modules/profile";
 import ProfileCard from "@/modules/profile/components/profile-card";
-import { Route as ProtectedRoute } from "../../route";
 
-export const Route = createFileRoute("/_protected/profile/$userID/")({
+export const Route = createFileRoute("/_protected/profile/$username/")({
 	loader: async ({ params, context }) => {
 		const profileResponse = await context.queryClient.ensureQueryData(
-			userProfileQueryOptions(params.userID),
+			userProfileByUsernameQueryOptions(params.username),
 		);
 
 		if (!profileResponse.profile) {
@@ -20,14 +19,13 @@ export const Route = createFileRoute("/_protected/profile/$userID/")({
 });
 
 function ProfileUserPage() {
-	const data = ProtectedRoute.useLoaderData();
 	const profile = Route.useLoaderData();
 
 	return (
 		<div className="py-12 px-4">
 			<div className="max-w-md mx-auto space-y-8">
 				{/* Profile Card */}
-				<ProfileCard session={data} profile={profile} />
+				<ProfileCard profile={profile} />
 
 				{/* Top Artists Section */}
 				<div>

@@ -1,6 +1,6 @@
 import { queryOptions, useMutation } from "@tanstack/react-query";
 import api from "@/lib/api";
-import type { GetProfileResponse } from "@/lib/types";
+import type { GetProfileResponse, GetProfileUserResponse } from "@/lib/types";
 import type { ProfileSchema } from "./schema";
 
 export function profileQueryOptions() {
@@ -14,7 +14,18 @@ export function userProfileQueryOptions(userID: string) {
 	return queryOptions({
 		queryKey: ["user-profile", userID],
 		queryFn: () =>
-			api<GetProfileResponse>({ method: "GET", url: `/profile/${userID}` }),
+			api<GetProfileUserResponse>({ method: "GET", url: `/profile/${userID}` }),
+	});
+}
+
+export function userProfileByUsernameQueryOptions(username: string) {
+	return queryOptions({
+		queryKey: ["user-profile-username", username],
+		queryFn: () =>
+			api<GetProfileUserResponse>({
+				method: "GET",
+				url: `/profile/${username}`,
+			}),
 	});
 }
 

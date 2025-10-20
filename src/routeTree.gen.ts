@@ -17,7 +17,7 @@ import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as ProtectedProfileIndexRouteImport } from './routes/_protected/profile/index'
 import { Route as ProtectedFindIndexRouteImport } from './routes/_protected/find/index'
 import { Route as ProtectedProfileSetupIndexRouteImport } from './routes/_protected/profile/setup/index'
-import { Route as ProtectedProfileUserIDIndexRouteImport } from './routes/_protected/profile/$userID/index'
+import { Route as ProtectedProfileUsernameIndexRouteImport } from './routes/_protected/profile/$username/index'
 
 const ProtectedRouteRoute = ProtectedRouteRouteImport.update({
   id: '/_protected',
@@ -58,10 +58,10 @@ const ProtectedProfileSetupIndexRoute =
     path: '/profile/setup/',
     getParentRoute: () => ProtectedRouteRoute,
   } as any)
-const ProtectedProfileUserIDIndexRoute =
-  ProtectedProfileUserIDIndexRouteImport.update({
-    id: '/profile/$userID/',
-    path: '/profile/$userID/',
+const ProtectedProfileUsernameIndexRoute =
+  ProtectedProfileUsernameIndexRouteImport.update({
+    id: '/profile/$username/',
+    path: '/profile/$username/',
     getParentRoute: () => ProtectedRouteRoute,
   } as any)
 
@@ -71,7 +71,7 @@ export interface FileRoutesByFullPath {
   '/register': typeof AuthRegisterRoute
   '/find': typeof ProtectedFindIndexRoute
   '/profile': typeof ProtectedProfileIndexRoute
-  '/profile/$userID': typeof ProtectedProfileUserIDIndexRoute
+  '/profile/$username': typeof ProtectedProfileUsernameIndexRoute
   '/profile/setup': typeof ProtectedProfileSetupIndexRoute
 }
 export interface FileRoutesByTo {
@@ -80,7 +80,7 @@ export interface FileRoutesByTo {
   '/register': typeof AuthRegisterRoute
   '/find': typeof ProtectedFindIndexRoute
   '/profile': typeof ProtectedProfileIndexRoute
-  '/profile/$userID': typeof ProtectedProfileUserIDIndexRoute
+  '/profile/$username': typeof ProtectedProfileUsernameIndexRoute
   '/profile/setup': typeof ProtectedProfileSetupIndexRoute
 }
 export interface FileRoutesById {
@@ -92,7 +92,7 @@ export interface FileRoutesById {
   '/_auth/register': typeof AuthRegisterRoute
   '/_protected/find/': typeof ProtectedFindIndexRoute
   '/_protected/profile/': typeof ProtectedProfileIndexRoute
-  '/_protected/profile/$userID/': typeof ProtectedProfileUserIDIndexRoute
+  '/_protected/profile/$username/': typeof ProtectedProfileUsernameIndexRoute
   '/_protected/profile/setup/': typeof ProtectedProfileSetupIndexRoute
 }
 export interface FileRouteTypes {
@@ -103,7 +103,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/find'
     | '/profile'
-    | '/profile/$userID'
+    | '/profile/$username'
     | '/profile/setup'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -112,7 +112,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/find'
     | '/profile'
-    | '/profile/$userID'
+    | '/profile/$username'
     | '/profile/setup'
   id:
     | '__root__'
@@ -123,7 +123,7 @@ export interface FileRouteTypes {
     | '/_auth/register'
     | '/_protected/find/'
     | '/_protected/profile/'
-    | '/_protected/profile/$userID/'
+    | '/_protected/profile/$username/'
     | '/_protected/profile/setup/'
   fileRoutesById: FileRoutesById
 }
@@ -191,11 +191,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedProfileSetupIndexRouteImport
       parentRoute: typeof ProtectedRouteRoute
     }
-    '/_protected/profile/$userID/': {
-      id: '/_protected/profile/$userID/'
-      path: '/profile/$userID'
-      fullPath: '/profile/$userID'
-      preLoaderRoute: typeof ProtectedProfileUserIDIndexRouteImport
+    '/_protected/profile/$username/': {
+      id: '/_protected/profile/$username/'
+      path: '/profile/$username'
+      fullPath: '/profile/$username'
+      preLoaderRoute: typeof ProtectedProfileUsernameIndexRouteImport
       parentRoute: typeof ProtectedRouteRoute
     }
   }
@@ -218,14 +218,14 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
 interface ProtectedRouteRouteChildren {
   ProtectedFindIndexRoute: typeof ProtectedFindIndexRoute
   ProtectedProfileIndexRoute: typeof ProtectedProfileIndexRoute
-  ProtectedProfileUserIDIndexRoute: typeof ProtectedProfileUserIDIndexRoute
+  ProtectedProfileUsernameIndexRoute: typeof ProtectedProfileUsernameIndexRoute
   ProtectedProfileSetupIndexRoute: typeof ProtectedProfileSetupIndexRoute
 }
 
 const ProtectedRouteRouteChildren: ProtectedRouteRouteChildren = {
   ProtectedFindIndexRoute: ProtectedFindIndexRoute,
   ProtectedProfileIndexRoute: ProtectedProfileIndexRoute,
-  ProtectedProfileUserIDIndexRoute: ProtectedProfileUserIDIndexRoute,
+  ProtectedProfileUsernameIndexRoute: ProtectedProfileUsernameIndexRoute,
   ProtectedProfileSetupIndexRoute: ProtectedProfileSetupIndexRoute,
 }
 

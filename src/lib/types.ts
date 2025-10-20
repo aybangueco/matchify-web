@@ -21,8 +21,17 @@ export interface Profile {
 	updatedAt: Date;
 }
 
+export interface ProfileWithUser extends Profile {
+	username: string;
+	name: string;
+}
+
 export interface GetProfileResponse extends APIResponse {
 	profile: Profile | null;
+}
+
+export interface GetProfileUserResponse extends APIResponse {
+	profile: ProfileWithUser | null;
 }
 
 export type ArtistMatchInfoImage = {

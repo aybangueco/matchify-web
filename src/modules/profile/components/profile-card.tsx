@@ -1,15 +1,13 @@
 import { User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import type { Session } from "@/lib/auth-client";
-import type { Profile } from "@/lib/types";
+import type { ProfileWithUser } from "@/lib/types";
 
 type ProfileCardProps = {
-	session: Session;
-	profile: Profile;
+	profile: ProfileWithUser;
 };
 
-export default function ProfileCard({ session, profile }: ProfileCardProps) {
+export default function ProfileCard({ profile }: ProfileCardProps) {
 	return (
 		<Card className="border shadow-sm p-8">
 			<div className="flex flex-col items-center text-center space-y-4">
@@ -19,12 +17,10 @@ export default function ProfileCard({ session, profile }: ProfileCardProps) {
 
 				<div className="space-y-2">
 					<h1 className="text-3xl font-bold tracking-tight text-primary">
-						{session.user.name}
+						{profile.name}
 					</h1>
 
-					<div className="text-secondary-foreground">
-						@{session.user.username}
-					</div>
+					<div className="text-secondary-foreground">@{profile.username}</div>
 
 					<div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
 						<span>{profile.location}</span>
