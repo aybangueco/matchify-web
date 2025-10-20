@@ -12,8 +12,8 @@ import type {
 	WSMessage,
 	WSState,
 } from "@/lib/types";
+import { useAuth } from "@/modules/auth/components/auth-provider";
 import { Chat, FindingMatch } from "@/modules/find";
-import { Route as ProtectedRoute } from "../route";
 
 export const Route = createFileRoute("/_protected/find/")({
 	component: FindPage,
@@ -29,7 +29,7 @@ type Option = {
 };
 
 function FindPage() {
-	const { user } = ProtectedRoute.useLoaderData();
+	const { session } = useAuth();
 	const [find, setFind] = useState<Find | null>(null);
 	const [isFinding, setIsFinding] = useState<boolean>(false);
 	const [isConnected, setIsConnected] = useState<boolean>(false);
@@ -53,7 +53,7 @@ function FindPage() {
 			sendJsonMessage<WSState>({
 				type: "STATE",
 				typing: isTyping.current,
-				from: user.id,
+				from: session?.user.id ?? "",
 			});
 		}
 
@@ -62,16 +62,16 @@ function FindPage() {
 			sendJsonMessage<WSState>({
 				type: "STATE",
 				typing: isTyping.current,
-				from: user.id,
+				from: session?.user.id ?? "",
 			});
 		}, 500);
-	}, [sendJsonMessage, user, debounceTyping]);
+	}, [sendJsonMessage, session, debounceTyping]);
 
 	const onSendMessage = (message: string) => {
 		const newMessage: WSMessage = {
 			type: "MESSAGE",
 			message,
-			from: user.id,
+			from: session?.user.id ?? "",
 		};
 		sendJsonMessage<WSMessage>(newMessage);
 	};
@@ -144,7 +144,7 @@ function FindPage() {
 				isConnected={isConnected}
 				onDisconnect={() => onClickCancel()}
 				otherName={connectedTo?.username ?? ""}
-				yourName={user.username ?? ""}
+				yourName={session?.user.username ?? ""}
 				isOtherTyping={isOtherTyping}
 				handleTyping={handleTyping}
 			/>

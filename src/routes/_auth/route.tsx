@@ -1,11 +1,17 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
-import { authClient } from "@/lib/auth-client";
 
 export const Route = createFileRoute("/_auth")({
-	beforeLoad: async () => {
-		const { data } = await authClient.getSession();
+	beforeLoad: async ({ context }) => {
+		let redirectToProtected = false;
 
-		if (data?.session) {
+		try {
+			await context.auth.ensureSession();
+			redirectToProtected = true;
+		} catch (_) {
+			redirectToProtected = false;
+		}
+
+		if (redirectToProtected) {
 			throw redirect({ to: "/profile" });
 		}
 	},

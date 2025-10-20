@@ -23,8 +23,8 @@ import {
 	useCreateArtistMutation,
 	useDeleteArtistMutation,
 } from "@/modules/artist";
+import { useAuth } from "@/modules/auth/components/auth-provider";
 import { ProfileCard, profileQueryOptions } from "@/modules/profile";
-import { Route as ProtectedRoute } from "../route";
 
 export const Route = createFileRoute("/_protected/profile/")({
 	loader: async ({ context }) => {
@@ -42,11 +42,11 @@ export const Route = createFileRoute("/_protected/profile/")({
 });
 
 function ProfilePage() {
-	const { user, session } = ProtectedRoute.useLoaderData();
+	const { session } = useAuth();
 	const profile = Route.useLoaderData();
 
 	const queryClient = useQueryClient();
-	const artistsQuery = useQuery(artistsQueryOptions(user.id));
+	const artistsQuery = useQuery(artistsQueryOptions(session?.user.id ?? ""));
 
 	const [artistActive, setArtistActive] = useState<boolean>(false);
 
@@ -68,7 +68,7 @@ function ProfilePage() {
 		<div className="py-12 px-4">
 			<div className="max-w-md mx-auto space-y-8">
 				{/* Profile Card */}
-				<ProfileCard session={{ user, session }} profile={profile} />
+				<ProfileCard profile={profile} />
 
 				{/* Top Artists Section */}
 				<div>
@@ -123,8 +123,8 @@ function SearchArtistDialog({
 }) {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [isSearching, setIsSearching] = useState<boolean>(false);
-	const { user } = ProtectedRoute.useLoaderData();
 	const [artists, setArtists] = useState<ArtistMatchInfo[]>([]);
+	const { session } = useAuth();
 
 	let searchResult = "";
 
@@ -203,7 +203,7 @@ function SearchArtistDialog({
 									onClick={() =>
 										onClickAddArtist({
 											artistName: artist.name,
-											createdBy: user.id,
+											createdBy: session?.user.id ?? "",
 										})
 									}
 									className="w-full text-left p-3 rounded-lg hover:bg-accent transition-colors flex justify-between items-center group"

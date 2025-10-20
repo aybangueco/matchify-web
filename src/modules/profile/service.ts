@@ -6,7 +6,8 @@ import type { ProfileSchema } from "./schema";
 export function profileQueryOptions() {
 	return queryOptions({
 		queryKey: ["profile"],
-		queryFn: () => api<GetProfileResponse>({ method: "GET", url: "/profile" }),
+		queryFn: () =>
+			api<GetProfileUserResponse>({ method: "GET", url: "/profile" }),
 	});
 }
 

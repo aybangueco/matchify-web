@@ -1,7 +1,6 @@
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
-import { Toaster } from "react-hot-toast";
 
 import * as TanStackQueryProvider from "./integrations/tanstack-query/root-provider.tsx";
 
@@ -9,6 +8,9 @@ import * as TanStackQueryProvider from "./integrations/tanstack-query/root-provi
 import { routeTree } from "./routeTree.gen";
 
 import "./styles.css";
+import { Toaster } from "react-hot-toast";
+import { useAuth } from "./modules/auth/components/auth-provider.tsx";
+import { AuthProvider } from "./modules/auth/index.ts";
 import reportWebVitals from "./reportWebVitals.ts";
 
 // Create a new router instance
@@ -18,6 +20,8 @@ const router = createRouter({
 	routeTree,
 	context: {
 		...TanStackQueryProviderContext,
+		// biome-ignore lint: Forbidden non-null assertion.
+		auth: undefined!,
 	},
 	defaultPreload: "intent",
 	scrollRestoration: true,
@@ -33,7 +37,8 @@ declare module "@tanstack/react-router" {
 }
 
 function InnerApp() {
-	return <RouterProvider router={router} />;
+	const auth = useAuth();
+	return <RouterProvider router={router} context={{ auth }} />;
 }
 
 // Render the app
@@ -43,8 +48,10 @@ if (rootElement && !rootElement.innerHTML) {
 	root.render(
 		<StrictMode>
 			<TanStackQueryProvider.Provider {...TanStackQueryProviderContext}>
-				<Toaster />
-				<InnerApp />
+				<AuthProvider>
+					<Toaster />
+					<InnerApp />
+				</AuthProvider>
 			</TanStackQueryProvider.Provider>
 		</StrictMode>,
 	);

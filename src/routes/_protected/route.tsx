@@ -15,21 +15,28 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { authClient } from "@/lib/auth-client";
+import { useAuth } from "@/modules/auth/components/auth-provider";
 
 export const Route = createFileRoute("/_protected")({
-	loader: async () => {
-		const { data } = await authClient.getSession();
-		if (!data?.session) {
+	beforeLoad: async ({ context }) => {
+		let redirectToLogin = false;
+
+		try {
+			await context.auth.ensureSession();
+		} catch (_) {
+			redirectToLogin = true;
+		}
+
+		if (redirectToLogin) {
 			throw redirect({ to: "/login" });
 		}
-		return data;
 	},
 	component: ProtectedLayout,
 });
 
 function ProtectedLayout() {
-	const { user } = Route.useLoaderData();
 	const navigate = useNavigate();
+	const { session } = useAuth();
 
 	const navItems = [
 		{ label: "Find", icon: Compass, to: "/find" },
@@ -73,12 +80,12 @@ function ProtectedLayout() {
 									<User className="w-4 h-4 text-white" />
 								</div>
 								<span className="hidden sm:inline text-slate-700 font-medium">
-									{user.name}
+									{session?.user.name}
 								</span>
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end" className="w-48">
-							<DropdownMenuLabel>{user.name}</DropdownMenuLabel>
+							<DropdownMenuLabel>{session?.user.name}</DropdownMenuLabel>
 							<DropdownMenuSeparator />
 							<DropdownMenuItem
 								onClick={() => navigate({ to: "/profile" })}
