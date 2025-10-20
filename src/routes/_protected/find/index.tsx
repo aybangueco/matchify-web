@@ -5,7 +5,6 @@ import useWebSocket from "react-use-websocket";
 import type { SendJsonMessage } from "react-use-websocket/dist/lib/types";
 import { Button } from "@/components/ui/button";
 import useDebounce from "@/hooks/use-debounce";
-import { authClient } from "@/lib/auth-client";
 import type {
 	ConnectedTo,
 	Find,
@@ -14,6 +13,7 @@ import type {
 	WSState,
 } from "@/lib/types";
 import { Chat, FindingMatch } from "@/modules/find";
+import { Route as ProtectedRoute } from "../route";
 
 export const Route = createFileRoute("/_protected/find/")({
 	component: FindPage,
@@ -29,7 +29,7 @@ type Option = {
 };
 
 function FindPage() {
-	const { data: session } = authClient.useSession();
+	const { user } = ProtectedRoute.useLoaderData();
 	const [find, setFind] = useState<Find | null>(null);
 	const [isFinding, setIsFinding] = useState<boolean>(false);
 	const [isConnected, setIsConnected] = useState<boolean>(false);
@@ -53,7 +53,7 @@ function FindPage() {
 			sendJsonMessage<WSState>({
 				type: "STATE",
 				typing: isTyping.current,
-				from: session?.user.id ?? "",
+				from: user.id,
 			});
 		}
 
@@ -62,16 +62,16 @@ function FindPage() {
 			sendJsonMessage<WSState>({
 				type: "STATE",
 				typing: isTyping.current,
-				from: session?.user.id ?? "",
+				from: user.id,
 			});
 		}, 500);
-	}, [sendJsonMessage, session, debounceTyping]);
+	}, [sendJsonMessage, user, debounceTyping]);
 
 	const onSendMessage = (message: string) => {
 		const newMessage: WSMessage = {
 			type: "MESSAGE",
 			message,
-			from: session?.user.id ?? "",
+			from: user.id,
 		};
 		sendJsonMessage<WSMessage>(newMessage);
 	};
@@ -144,7 +144,7 @@ function FindPage() {
 				isConnected={isConnected}
 				onDisconnect={() => onClickCancel()}
 				otherName={connectedTo?.username ?? ""}
-				yourName={session?.user.username ?? ""}
+				yourName={user.username ?? ""}
 				isOtherTyping={isOtherTyping}
 				handleTyping={handleTyping}
 			/>
