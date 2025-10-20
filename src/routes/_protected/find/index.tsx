@@ -1,11 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Disc3, Film, type LucideProps, Music } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import useWebSocket from "react-use-websocket";
 import type { SendJsonMessage } from "react-use-websocket/dist/lib/types";
 import { Button } from "@/components/ui/button";
+import useDebounce from "@/hooks/use-debounce";
 import { authClient } from "@/lib/auth-client";
-import type { ConnectedTo, Find, WSDataContext, WSMessage } from "@/lib/types";
+import type {
+	ConnectedTo,
+	Find,
+	WSDataContext,
+	WSMessage,
+	WSState,
+} from "@/lib/types";
 import { Chat, FindingMatch } from "@/modules/find";
 
 export const Route = createFileRoute("/_protected/find/")({
@@ -29,6 +36,9 @@ function FindPage() {
 	const [connectedTo, setConnectedTo] = useState<ConnectedTo | null>(null);
 
 	const [messages, setMessages] = useState<WSMessage[]>([]);
+	const [isOtherTyping, setIsOtherTyping] = useState<boolean>(false);
+	const isTyping = useRef<boolean>(false);
+	const debounceTyping = useDebounce();
 
 	const [socketURL, setSocketURL] = useState<string | null>(null);
 	const {
@@ -36,6 +46,26 @@ function FindPage() {
 		sendJsonMessage,
 	}: { lastJsonMessage: WSDataContext; sendJsonMessage: SendJsonMessage } =
 		useWebSocket(socketURL);
+
+	const handleTyping = useCallback(() => {
+		if (!isTyping.current) {
+			isTyping.current = true;
+			sendJsonMessage<WSState>({
+				type: "STATE",
+				typing: isTyping.current,
+				from: session?.user.id ?? "",
+			});
+		}
+
+		debounceTyping(() => {
+			isTyping.current = false;
+			sendJsonMessage<WSState>({
+				type: "STATE",
+				typing: isTyping.current,
+				from: session?.user.id ?? "",
+			});
+		}, 500);
+	}, [sendJsonMessage, session, debounceTyping]);
 
 	const onSendMessage = (message: string) => {
 		const newMessage: WSMessage = {
@@ -95,6 +125,8 @@ function FindPage() {
 			setIsConnected(true);
 		} else if (lastJsonMessage && lastJsonMessage.type === "MESSAGE") {
 			setMessages((prev) => [...prev, lastJsonMessage]);
+		} else if (lastJsonMessage && lastJsonMessage.type === "STATE") {
+			setIsOtherTyping(lastJsonMessage.typing);
 		}
 	}, [lastJsonMessage]);
 
@@ -113,6 +145,8 @@ function FindPage() {
 				onDisconnect={() => onClickCancel()}
 				otherName={connectedTo?.username ?? ""}
 				yourName={session?.user.username ?? ""}
+				isOtherTyping={isOtherTyping}
+				handleTyping={handleTyping}
 			/>
 		);
 	}

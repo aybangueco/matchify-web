@@ -84,4 +84,10 @@ export type WSMessage = {
 	from: string | "SYSTEM";
 };
 
-export type WSDataContext = WSDisconnected | WSConnected | WSMessage;
+export type WSState = {
+	type: "STATE";
+	typing: boolean;
+	from: string;
+};
+
+export type WSDataContext = WSDisconnected | WSConnected | WSMessage | WSState;
