@@ -14,22 +14,13 @@ export default function FindingMatch({
 	cancelText = "Stop",
 }: FindingMatchProps) {
 	const [dots, setDots] = useState("");
-	const [userCount, setUserCount] = useState(12847);
 
 	useEffect(() => {
 		const interval = setInterval(() => {
-			setDots((prev) => (prev.length >= 3 ? "" : `${prev} .`));
+			setDots((prev) => (prev.length >= 3 ? "" : `${prev}.`));
 		}, 500);
 
 		return () => clearInterval(interval);
-	}, []);
-
-	useEffect(() => {
-		const countInterval = setInterval(() => {
-			setUserCount((prev) => prev + Math.floor(Math.random() * 10 - 3));
-		}, 2000);
-
-		return () => clearInterval(countInterval);
 	}, []);
 
 	return (
@@ -56,18 +47,6 @@ export default function FindingMatch({
 							<p className="text-sm text-muted-foreground">
 								This may take a moment
 							</p>
-						</div>
-
-						{/* Online Users Counter */}
-						<div className="flex items-center gap-6 text-sm text-muted-foreground">
-							<div className="flex items-center gap-2">
-								<Users className="w-4 h-4" />
-								<span>{userCount.toLocaleString()} online</span>
-							</div>
-							<div className="flex items-center gap-2">
-								<Globe className="w-4 h-4" />
-								<span>Worldwide</span>
-							</div>
 						</div>
 
 						{/* Loading Bar */}
