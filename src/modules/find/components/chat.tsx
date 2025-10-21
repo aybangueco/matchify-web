@@ -78,7 +78,7 @@ export default function Chat({
 	};
 
 	return (
-		<div className="p-4">
+		<div className="p-4 flex justify-center items-center">
 			<div className="w-full max-w-4xl h-[800px] max-h-[800px] flex flex-col">
 				{/* Header */}
 				<div className=" p-4 flex items-center justify-between bg-muted/30">
