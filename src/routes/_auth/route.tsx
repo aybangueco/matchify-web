@@ -4,11 +4,10 @@ export const Route = createFileRoute("/_auth")({
 	beforeLoad: async ({ context }) => {
 		let redirectToProtected = false;
 
-		try {
-			await context.auth.ensureSession();
+		const data = await context.auth.ensureSession();
+
+		if (data) {
 			redirectToProtected = true;
-		} catch (_) {
-			redirectToProtected = false;
 		}
 
 		if (redirectToProtected) {

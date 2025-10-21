@@ -4,7 +4,7 @@ import type { Session } from "@/lib/auth-client";
 import { sessionQueryOptions } from "../service";
 
 export type AuthContextType = {
-	ensureSession: () => Promise<void>;
+	ensureSession: () => Promise<Session>;
 	session: Session | undefined;
 };
 
@@ -18,9 +18,10 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 	const queryClient = useQueryClient();
 	const { data: session } = useQuery(sessionQueryOptions());
 
-	const ensureSession = useCallback(async () => {
-		await queryClient.ensureQueryData(sessionQueryOptions());
-	}, [queryClient]);
+	const ensureSession = useCallback(
+		async () => await queryClient.ensureQueryData(sessionQueryOptions()),
+		[queryClient],
+	);
 
 	return (
 		<AuthContext.Provider value={{ session, ensureSession }}>

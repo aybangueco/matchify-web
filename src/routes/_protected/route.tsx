@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query";
 import {
 	createFileRoute,
 	Outlet,
@@ -19,15 +20,15 @@ import { useAuth } from "@/modules/auth/components/auth-provider";
 
 export const Route = createFileRoute("/_protected")({
 	beforeLoad: async ({ context }) => {
-		let redirectToLogin = false;
+		let redirectToAuth = false;
 
-		try {
-			await context.auth.ensureSession();
-		} catch (_) {
-			redirectToLogin = true;
+		const data = await context.auth.ensureSession();
+
+		if (!data) {
+			redirectToAuth = true;
 		}
 
-		if (redirectToLogin) {
+		if (redirectToAuth) {
 			throw redirect({ to: "/login" });
 		}
 	},
@@ -37,6 +38,7 @@ export const Route = createFileRoute("/_protected")({
 function ProtectedLayout() {
 	const navigate = useNavigate();
 	const { session } = useAuth();
+	const queryClient = useQueryClient();
 
 	const navItems = [
 		{ label: "Find", icon: Compass, to: "/find" },
@@ -98,8 +100,16 @@ function ProtectedLayout() {
 							<DropdownMenuItem
 								className="gap-2 cursor-pointer text-red-600 hover:text-red-700 hover:bg-red-50"
 								onClick={async () => {
-									await authClient.signOut();
-									navigate({ to: "/login" });
+									await authClient.signOut({
+										fetchOptions: {
+											onSuccess() {
+												queryClient.invalidateQueries({
+													queryKey: ["session"],
+												});
+												navigate({ to: "/login", reloadDocument: true });
+											},
+										},
+									});
 								}}
 							>
 								<LogOut className="w-4 h-4" />
