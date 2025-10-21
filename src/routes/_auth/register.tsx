@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -34,6 +35,7 @@ function RegisterPage() {
 }
 
 function RegisterForm() {
+	const queryClient = useQueryClient();
 	const registerForm = useForm<RegisterSchema>({
 		resolver: zodResolver(registerSchema),
 		defaultValues: {
@@ -48,15 +50,16 @@ function RegisterForm() {
 	const navigate = useNavigate();
 
 	async function onSubmit(values: RegisterSchema) {
-		const { error } = await authClient.signUp.email(values);
-
-		if (error?.message) {
-			toast.error(error.message);
-			return;
-		}
-
-		toast.success("Registered successfully");
-		navigate({ to: "/profile/setup" });
+		await authClient.signUp.email(values, {
+			onSuccess() {
+				queryClient.invalidateQueries({ queryKey: ["session"] });
+				toast.success("Registered successfully");
+				navigate({ to: "/profile/setup", reloadDocument: true });
+			},
+			onError(ctx) {
+				toast.error(ctx.error.message);
+			},
+		});
 	}
 
 	return (

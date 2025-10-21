@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -34,6 +35,7 @@ export function LoginPage() {
 }
 
 function LoginForm() {
+	const queryClient = useQueryClient();
 	const loginForm = useForm<LoginSchema>({
 		resolver: zodResolver(loginSchema),
 		defaultValues: {
@@ -45,15 +47,16 @@ function LoginForm() {
 	const navigate = useNavigate();
 
 	async function onSubmit(values: LoginSchema) {
-		const { error } = await authClient.signIn.username(values);
-
-		if (error?.message) {
-			toast.error(error.message);
-			return;
-		}
-
-		toast.success("Logged in successfully");
-		navigate({ to: "/profile" });
+		await authClient.signIn.username(values, {
+			onSuccess() {
+				queryClient.invalidateQueries({ queryKey: ["session"] });
+				toast.success("Logged in successfully");
+				navigate({ to: "/profile", reloadDocument: true });
+			},
+			onError(ctx) {
+				toast.error(ctx.error.message);
+			},
+		});
 	}
 
 	return (
