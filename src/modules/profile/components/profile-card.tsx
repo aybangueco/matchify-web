@@ -2,12 +2,15 @@ import { User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import type { ProfileWithUser } from "@/lib/types";
+import { useAuth } from "@/modules/auth/components/auth-provider";
 
 type ProfileCardProps = {
 	profile: ProfileWithUser;
 };
 
 export default function ProfileCard({ profile }: ProfileCardProps) {
+	const { session } = useAuth();
+
 	return (
 		<Card className="border shadow-sm p-8">
 			<div className="flex flex-col items-center text-center space-y-4">
@@ -33,9 +36,11 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
 					{profile.bio}
 				</p>
 
-				<Button className="w-full mt-4" size="default">
-					Edit Profile
-				</Button>
+				{session?.user.id === profile.userID && (
+					<Button className="w-full mt-4" size="default">
+						Edit Profile
+					</Button>
+				)}
 			</div>
 		</Card>
 	);
