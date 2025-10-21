@@ -3,6 +3,7 @@ import { Disc3, Film, type LucideProps, Music } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import useWebSocket from "react-use-websocket";
 import type { SendJsonMessage } from "react-use-websocket/dist/lib/types";
+import Metadata from "@/components/page/metadata";
 import { Button } from "@/components/ui/button";
 import useDebounce from "@/hooks/use-debounce";
 import type {
@@ -153,6 +154,10 @@ function FindPage() {
 
 	return (
 		<div className="py-12 px-4 flex items-center justify-center">
+			<Metadata
+				title="Find | Matchify"
+				description="Setup your matchify profile"
+			/>
 			<div className="w-full max-w-2xl">
 				{/* Header Section */}
 				<div className="text-center mb-12">

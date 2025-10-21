@@ -3,6 +3,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { Plus, Search } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import Metadata from "@/components/page/metadata";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
@@ -66,6 +67,10 @@ function ProfilePage() {
 
 	return (
 		<div className="py-12 px-4">
+			<Metadata
+				title={`${session?.user.name} | Matchify`}
+				description="The profile of user"
+			/>
 			<div className="max-w-md mx-auto space-y-8">
 				{/* Profile Card */}
 				<ProfileCard profile={profile} />

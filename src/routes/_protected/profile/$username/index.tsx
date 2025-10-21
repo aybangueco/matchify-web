@@ -1,4 +1,5 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
+import Metadata from "@/components/page/metadata";
 import { Card } from "@/components/ui/card";
 import { userProfileByUsernameQueryOptions } from "@/modules/profile";
 import ProfileCard from "@/modules/profile/components/profile-card";
@@ -23,6 +24,10 @@ function ProfileUserPage() {
 
 	return (
 		<div className="py-12 px-4">
+			<Metadata
+				title={`${profile.name} | Matchify`}
+				description="Setup your matchify profile"
+			/>
 			<div className="max-w-md mx-auto space-y-8">
 				{/* Profile Card */}
 				<ProfileCard profile={profile} />
