@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Disc3, Film, type LucideProps, Music } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
 import useWebSocket from "react-use-websocket";
 import type { SendJsonMessage } from "react-use-websocket/dist/lib/types";
 import Metadata from "@/components/page/metadata";
@@ -130,6 +131,20 @@ function FindPage() {
 			setIsOtherTyping(lastJsonMessage.typing);
 		}
 	}, [lastJsonMessage]);
+
+	// For managing existing queue and sessions
+	useEffect(() => {
+		if (
+			lastJsonMessage &&
+			lastJsonMessage.type === "DISCONNECTED" &&
+			isFinding &&
+			find
+		) {
+			setIsFinding(false);
+			setFind(null);
+			toast.error(lastJsonMessage.message);
+		}
+	}, [lastJsonMessage, isFinding, find]);
 
 	// Finding users to match
 	if (isFinding) {
