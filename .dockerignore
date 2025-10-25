@@ -1,0 +1,7 @@
+Dockerfile
+node_modules
+README.md
+.gitignore
+.vscode
+.tanstack
+.github/workflows
