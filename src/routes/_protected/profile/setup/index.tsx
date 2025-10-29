@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
 import { UserCircleIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -30,12 +31,12 @@ import {
 } from "@/modules/profile/service";
 
 export const Route = createFileRoute("/_protected/profile/setup/")({
-	beforeLoad: async ({ context }) => {
+	loader: async ({ context }) => {
 		const profileResponse = await context.queryClient.ensureQueryData(
 			profileQueryOptions(),
 		);
 
-		if (profileResponse.profile) {
+		if (profileResponse.profile?.id) {
 			throw redirect({ to: "/profile" });
 		}
 	},
@@ -62,6 +63,7 @@ function ProfileSetupPage() {
 }
 
 function ProfileSetupForm() {
+	const queryClient = useQueryClient();
 	const createProfile = useCreateProfileMutation();
 	const router = useRouter();
 
@@ -77,9 +79,10 @@ function ProfileSetupForm() {
 
 	async function onSubmit(values: ProfileSchema) {
 		createProfile.mutate(values, {
-			onSuccess: (data) => {
+			onSuccess: async (data) => {
 				toast.success(data.message);
-				router.invalidate();
+				await queryClient.refetchQueries({ queryKey: ["profile"] });
+				await router.invalidate();
 			},
 			onError: (error) => {
 				toast.error(error.message);

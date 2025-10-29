@@ -11,14 +11,6 @@ export function profileQueryOptions() {
 	});
 }
 
-export function userProfileQueryOptions(userID: string) {
-	return queryOptions({
-		queryKey: ["user-profile", userID],
-		queryFn: () =>
-			api<GetProfileUserResponse>({ method: "GET", url: `/profile/${userID}` }),
-	});
-}
-
 export function userProfileByUsernameQueryOptions(username: string) {
 	return queryOptions({
 		queryKey: ["user-profile-username", username],

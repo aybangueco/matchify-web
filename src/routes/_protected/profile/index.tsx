@@ -33,7 +33,7 @@ export const Route = createFileRoute("/_protected/profile/")({
 			profileQueryOptions(),
 		);
 
-		if (!profileResponse.profile) {
+		if (!profileResponse.profile?.id) {
 			throw redirect({ to: "/profile/setup" });
 		}
 
