@@ -16,6 +16,7 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { authClient } from "@/lib/auth-client";
+import { sessionQueryOptions } from "@/modules/auth";
 import { useAuth } from "@/modules/auth/components/auth-provider";
 
 export const Route = createFileRoute("/_protected")({
@@ -102,11 +103,11 @@ function ProtectedLayout() {
 								onClick={async () => {
 									await authClient.signOut({
 										fetchOptions: {
-											onSuccess() {
-												queryClient.invalidateQueries({
-													queryKey: ["session"],
-												});
-												navigate({ to: "/login", reloadDocument: true });
+											onSuccess: async () => {
+												await queryClient.invalidateQueries(
+													sessionQueryOptions(),
+												);
+												await navigate({ to: "/login" });
 											},
 										},
 									});
